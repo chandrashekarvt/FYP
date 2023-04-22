@@ -3,6 +3,7 @@ import { Form, Input, Message, Button } from 'semantic-ui-react';
 import Campaign from '../ethereum/testingNode';
 import web3 from '../ethereum/web3';
 import { Router } from '../routes';
+import { putResult } from '../utils';
 
 class ContributeForm extends Component {
   state = {
@@ -15,19 +16,19 @@ class ContributeForm extends Component {
   onSubmit = async event => {
     event.preventDefault();
 
-    const campaign = Campaign(this.props.address);
+    // const campaign = Campaign(this.props.address);
 
-    this.setState({ loading: true, errorMessage: '' });
+    // this.setState({ loading: true, errorMessage: '' });
 
     try {
-      const accounts = await web3.eth.getAccounts();
-      await campaign.methods.approve(this.state.malwareAddress,this.state.value).send({
-        from: accounts[0],
-        malwareAddress : this.state.malwareAddress,
-        value: this.state.value
-      });
-
-      Router.replaceRoute(`/campaigns/test/${this.props.address}`);
+      // const accounts = await web3.eth.getAccounts();
+      // await campaign.methods.approve(this.state.malwareAddress,this.state.value).send({
+      //   from: accounts[0],
+      //   malwareAddress : this.state.malwareAddress,
+      //   value: this.state.value
+      // });
+      const res = await putResult(this.props.address.hash, { ...this.props.address, percent: this.state.value });
+      Router.replaceRoute(`/campaigns/test/${this.props.address.hash}`);
     } catch (err) {
       this.setState({ errorMessage: err.message });
     }

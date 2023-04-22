@@ -11,26 +11,59 @@ import GetFileFormMalware from '../../components/GetFileFormMalware';
 
 
 import { Link } from '../../routes';
+import { getResult } from '../../utils';
 
 class CampaignShow extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      info: {
+        address: '',
+        prob: 0,
+        deployedUser: '0xefCFCc404B71eB723100D02f9c9dfC71C197e265',
+        MalwareHash: '',
+        amount: 0,
+        perCentMalware: 0
+      }
+    }
+  }
   static async getInitialProps(props) {
-    const campaign = Campaign(props.query.address);
+    const hash = props.query.address;
 
-    const summary = await campaign.methods.getSummary().call();
+    let res = await getResult(`http://localhost:8000/malwaredetection/get/${hash}`);
+    const { contribution, link, percent } = res;
 
+    // const campaign = Campaign(props.query.address);
+    // // const campaign = Campaign('0xefCFCc404B71eB723100D02f9c9dfC71C197e265');
+
+    // const summary = await campaign.methods.getSummary().call();
+
+    // // const summary = ["a", "b", "c", "d", "e", "f"];
 
     return {
-      address: props.query.address,
-      addedAddress: summary[0],
-      prob: summary[1],
-      deployedUser: summary[2],
-      MalwareHash: summary[3],
-      amount: summary[4],
-      perCentMalware: summary[5],
-
-
+      address: hash,
+      addedAddress: hash,
+      prob: 0,
+      deployedUser: '0xefCFCc404B71eB723100D02f9c9dfC71C197e265',
+      MalwareHash: hash,
+      amount: contribution,
+      perCentMalware: percent,
     };
   }
+
+  // async componentDidMount() {
+  //   console.log(this.props)
+  //   const hash = this.props.query.address;
+
+  //   let res = getResult(`http://localhost:8000/malwaredetection/get/${hash}`);
+  //   const { contribution, link, percent } = res;
+  //   this.setState({
+  //     info: { ...this.state.info, address: hash, hash, amount: contribution, perCentMalware: percent }
+  //   })
+
+  // }
 
   renderCards() {
     const {
@@ -99,6 +132,7 @@ class CampaignShow extends Component {
   }
 
   render() {
+
     return (
       <Layout>
 

@@ -12,43 +12,49 @@ import AnalyseForm from '../../../components/AnalyseForm';
 import GetFileForm from '../../../components/GetFileFormMalware';
 import DownloadForm from '../../../components/DownloadForm';
 import  ByteForm from '../../../components/ByteForm';
-//import  MalwaresForm from '../../../components/MalwaresForm';
+import MalwaresForm from '../../../components/MalwaresForm';
 
 
 import { Link } from '../../../routes';
+import { getResult } from '../../../utils';
 
 class CampaignShow extends Component {
   static async getInitialProps(props) {
-    const campaign = Campaign(props.query.address);
-    const campaigns = await factory.methods.getDeployedMalwares().call();
+    // const campaign = Campaign(props.query.address);
+    // const campaigns = await factory.methods.getDeployedMalwares().call();
 
-    const summary = await campaign.methods.trustValue().call();
-    const myaddress = await campaign.methods.nodeAddress().call();
+    // const summary = await campaign.methods.trustValue().call();
+    // const myaddress = await campaign.methods.nodeAddress().call();
+    const res = await getResult(`http://localhost:8000/malwaredetection/get/${props.query.address}`);
+    let campaigns = await getResult('http://localhost:8000/malwaredetection/');
 
+    const { contribution } = res;
     return {
+      obj: res,
       address: props.query.address,
-      trustValue : summary,
-      myAddress : myaddress,
-      campaignsNew : campaigns
+      trustValue: contribution,
+      myAddress: '0xefCFCc404B71eB723100D02f9c9dfC71C197e265',
+      campaignsNew: campaigns.malwares
 
     };
   }
 
-  renderCampaigns() {
-    const items = this.props.campaignsNew.map(address => {
-      return {
-        header: address,
-        description: (
-          <Link route={`/campaigns/${address}`}>
-            <a>View Malware</a>
-          </Link>
-        ),
-        fluid: true
-      };
-    });
 
-    return <Card.Group items={items} />;
-  }
+  // renderCampaigns() {
+  //   const items = this.props.campaignsNew.map(({ hash: address }) => {
+  //     return {
+  //       header: address,
+  //       description: (
+  //         <Link route={`/campaigns/${address}`}>
+  //           <a>View Malware</a>
+  //         </Link>
+  //       ),
+  //       fluid: true
+  //     };
+  //   });
+
+  //   return <Card.Group items={items} />;
+  // }
 
 
   renderCards() {
@@ -56,7 +62,6 @@ class CampaignShow extends Component {
       address,
       trustValue,
       myAddress
-
     } = this.props;
 
     const items = [
@@ -102,46 +107,33 @@ class CampaignShow extends Component {
 
     <Segment.Group>
 
-          <Segment>
-            <Header as='h3'>
-                <Icon name='bug' />
-                Malwares Reported
-            </Header>
-                <Grid.Row>
-                    {this.renderCampaigns()}
-                </Grid.Row>
-
-                </Segment>
         <Segment.Group horizontal>
-                <Segment>
+              {/* <Segment>
 
-            <Header as='h3'>
-                <Icon name="percent"/>
-                Percentage Malware Reported
-            </Header>
-                <Grid.Row>
-                  <PercentGetForm address={this.props.address} />
-                </Grid.Row>
+          <Header as='h3'>
+              <Icon name="percent"/>
+              Percentage Malware Reported
+          </Header>
+              <Grid.Row>
+                <PercentGetForm address={this.props.address} />
+              </Grid.Row>
 
-                </Segment>
+              </Segment>*/}
 
-                <Segment>
+              <Segment> 
 
             <Header as='h3'>
                     <Icon name="percent"/>
                         Report
             </Header>
                     <Grid.Row>
-                      <ApproveForm address={this.props.address} />
+                  <ApproveForm address={this.props.obj} />
                     </Grid.Row>
 
 
             </Segment>
-        </Segment.Group>
-
-
-                    <Segment>
-
+            </Segment.Group>
+            <Segment>
                     <Header as='h3'>
                         <Icon name='file alternate outline' />
                         Get File Url

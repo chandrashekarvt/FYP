@@ -7,7 +7,7 @@ const fs = require("fs")
 require("dotenv").config()
 
 const octokit = new Octokit({
-  auth: process.env.GITHUB_ACCESS_TOKEN,
+  auth: "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",
 })
 const main2=async(str)=>{
 
@@ -21,8 +21,8 @@ export default async (req:NextApiRequest, res:NextApiResponse)=> {
         try{
             const filename=hash//assign as str
             const {data}=await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-                owner: 'manjularachana',
-                repo: 'githubApiUsageToUploadDownload',
+              owner: "chandrashekarvt",
+              repo: "githubApiUsageToUploadDownload",
                 path: filename
               })
               console.log(data.html_url)

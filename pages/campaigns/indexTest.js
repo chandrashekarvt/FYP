@@ -3,19 +3,30 @@ import { Card, Button, Header,Icon,Segment} from 'semantic-ui-react';
 import factory from '../../ethereum/factory';
 import Layout from '../../components/Layout';
 import { Link } from '../../routes';
+import { getResult } from '../../utils';
 
 class CampaignIndex extends Component {
+  state = {
+    is_tester: false
+  }
+
   static async getInitialProps() {
     //const campaigns = await factory.methods.getDeployedMalwares().call();
-    const testingNodes = await factory.methods.getDeployedNodes().call();
-
+    // const testingNodes = await factory.methods.getDeployedNodes().call();
+    let res = await getResult('http://localhost:8000/malwaredetection/');
     return {
-         testingNodes
+      testingNodes: res.malwares.filter((obj) => obj.percent === 0)
      };
   }
 
+  componentDidMount() {
+    let is_tester = localStorage.getItem("is_tester") === "true";
+    this.setState({ is_tester })
+  }
+
   renderTestingNodes() {
-    const items = this.props.testingNodes.map(address => {
+
+    const items = this.props.testingNodes.map(({ hash: address }) => {
       return {
         header: address,
         description: (
@@ -30,7 +41,9 @@ class CampaignIndex extends Component {
     return <Card.Group items={items} />;
   }
 
+
   render() {
+    if (this.state.is_tester) {
     return (
       <Layout>
         <div>
@@ -65,6 +78,12 @@ class CampaignIndex extends Component {
         </div>
       </Layout>
     );
+    } else {
+      return (
+        <h3>You are not authorized to vote malewares</h3>
+      )
+    }
+
   }
 }
 

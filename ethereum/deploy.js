@@ -4,7 +4,7 @@ const compiledFactory = require('./build/MalwareDetection.json');
 
 const provider = new HDWalletProvider(
   'enable render dumb oil pioneer slide swing limb foil sport level trust',
-  'https://rinkeby.infura.io/v3/c3246ae8d1924050ba8baf499e10dbd3'
+  'https://mainnet.infura.io/v3/41394bd8d0254526be13defed288327a'
 );
 const web3 = new Web3(provider);
 

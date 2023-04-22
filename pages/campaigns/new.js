@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { Form, Button, Input, Message,Segment ,Header,Icon} from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
-import web3 from '../../ethereum/web3';
+// import web3 from '../../ethereum/web3';
 import { Router } from '../../routes';
 import GetFileFormMalware from '../../components/GetFileFormMalware';
+import Web3 from 'web3';
+import { postResult } from '../../utils';
 
 
 
@@ -19,23 +21,24 @@ class CampaignNew extends Component {
   };
 
   onSubmit = async event => {
+
     event.preventDefault();
 
     this.setState({ loading: true, errorMessage: '' });
 
     try {
+      let web3 = new Web3(window.web3.currentProvider)
       const accounts = await web3.eth.getAccounts();
       await factory.methods
         .createMalware(this.state.malwareHash,this.state.minimumContribution)
         .send({
-          from: accounts[0]
+          from: accounts[0],
         });
-
+      await postResult(this.state.malwareHash, this.state.minimumContribution, "dummy_link", 0)
       Router.pushRoute('/');
     } catch (err) {
       this.setState({ errorMessage: err.message });
-    }
-
+    } 
     this.setState({ loading: false });
   };
 
@@ -61,6 +64,7 @@ fetch("http://localhost:3000/api/uploadFile", requestOptions)
 
     this.setState({ loading: false });
   };
+
 
   render() {
     return (
